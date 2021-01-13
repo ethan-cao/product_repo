@@ -1,3 +1,9 @@
+/* @import — Tells the CSS engine to include an external style sheet. 
+   add external stylesheets from npm package
+*/
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~font-awesome/css/font-awesome.min.css";
+
 /* You can add global styles to this file, and also import other style files */
 div.card-header {
  font-size: large;
