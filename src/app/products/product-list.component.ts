@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
 import { IProduct } from "./product";
+import { ProductService } from "./product.service";
+
 @Component({
-  selector: 'pm-product',
+  selector: 'pm-product',  // necessary only if this component will be used as nested component
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
+  providers: []  // to register service with a Component Injector
 })
 export class ProductListComponent implements OnInit {
   pageTitle: string = 'Product List';
@@ -21,41 +24,34 @@ export class ProductListComponent implements OnInit {
     this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.products;
   }
 
-  filteredProducts: IProduct[];
+  filteredProducts: IProduct[] = [];
+  products: IProduct[];
+  errorMessage: string;
 
-  products: IProduct[] = [
-    {
-      productId: 1,
-      productName: 'Leaf Rake',
-      productCode: 'GDN-0011',
-      releaseDate: 'March 19, 2019',
-      description: 'Leaf rake with 48-inch wooden handle.',
-      price: 19.95,
-      starRating: 3.2,
-      imageUrl: 'assets/images/leaf_rake.png',
-    },
-    {
-      productId: 2,
-      productName: 'Garden Cart',
-      productCode: 'GDN-0023',
-      releaseDate: 'March 18, 2019',
-      description: '15 gallon capacity rolling garden cart',
-      price: 32.99,
-      starRating: 4.2,
-      imageUrl: 'assets/images/garden_cart.png',
-    },
-  ];
+  private productService: ProductService;
 
-  constructor() {
-    this.filteredProducts = [...this.products];
+  constructor(productService: ProductService) {
+    // do dependency injection in constructor
+    this.productService = productService;
+
   }
 
   toggleImage(): void {
     this.showImage = !this.showImage;
   }
 
-  ngOnInit() {
+  // retrieve data
+  ngOnInit(): void {
     console.log('onInit');
+
+    this.productService.getProducts().subscribe(
+      (products: IProduct[]) => {
+        this.products = products;
+        this.filteredProducts = this.products;
+      },
+      (error) => (this.errorMessage = error)
+    );
+
   }
 
   performFilter(listFilter: string): IProduct[] {
